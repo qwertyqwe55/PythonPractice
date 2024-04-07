@@ -1,6 +1,5 @@
 from fastapi import FastAPI
 
-
 app = FastAPI()
 
 from app.routes.task_1 import router as r_1
