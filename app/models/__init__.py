@@ -22,6 +22,10 @@ class ConverterResponse(BaseModel):
 #     age: int
 #     adult: bool = None
 
+class GeneratedFile(BaseModel):
+    file_type : str
+    matrix_size : int
+
 class User(BaseModel):
     name: str
     age: conint(gt=0, lt=100)
