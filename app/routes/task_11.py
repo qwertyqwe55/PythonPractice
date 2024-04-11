@@ -6,7 +6,7 @@ from sqlalchemy import create_engine, Column, Integer, String, Boolean
 
 from app.models import User
 
-router = APIRouter(tags=["API для хранения файлов"])
+router = APIRouter(tags=["Работа с БД"])
 
 Base = declarative_base()
 engine = create_engine("sqlite:///test.db")
