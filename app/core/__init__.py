@@ -64,7 +64,6 @@ def average_age_by_position(file) -> dict:
         data = pd.read_csv(buffer, delimiter=',', header=0,
                            names=['name', 'age', 'job'])
 
-        contents.close()
         buffer.close()
 
         # Проверка на валидные данные

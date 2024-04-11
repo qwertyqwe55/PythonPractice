@@ -4,6 +4,9 @@ version = "1.0.0"
 description = ""
 authors = ["Alex Gusev <gusev@ibs.ru>"]
 
+[tool.pytest.ini_options]
+pythonpath = [".", "app"]
+asyncio="auto"
 
 [tool.poetry.dependencies]
 python = "^3.10"
