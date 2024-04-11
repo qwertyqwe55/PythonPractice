@@ -80,6 +80,5 @@ async def download_file(file_id: int):
     """Описание."""
     with Session(engine) as session:
         results = session.get(Example,file_id)
-        print(results.file)
 
         return FileResponse(path=results.file, media_type='txt/pdf/mp4/doc/docx/zip',filename=results.file)

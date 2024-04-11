@@ -48,7 +48,7 @@ class CustomMiddleware(BaseHTTPMiddleware):
         self.some_attribute = some_attribute
 
     async def dispatch(self, request: Request, call_next):
-        try:
+        # try:
 
             # Необходимо для считываения количества выполненных запросов
             try:
@@ -76,7 +76,7 @@ class CustomMiddleware(BaseHTTPMiddleware):
                             f" {level} {request.method} {request.url} {responce.status_code}")
 
             return responce
-        except:
-            # В случае ошибки при запросе, возвращать код 500
-            response = Response("Internal Server Error", status_code=500)
-            return response
+        # except:
+        #     # В случае ошибки при запросе, возвращать код 500
+        #     response = Response("Internal Server Error", status_code=500)
+        #     return response
