@@ -66,15 +66,20 @@ def average_age_by_position(file) -> dict:
 
         contents.close()
         buffer.close()
+
+        # Проверка на валидные данные
         if ("" not in tuple(data["name"])
                 and ("" not in tuple(data["age"]))
                 and not np.all(data["age"].apply(lambda x: isinstance(x, int) and x > 0))
                 and "" not in tuple(data["job"])):
             raise HTTPException(status_code=400, detail="Неккоректные данные")
 
+        # Создаем уникальный набор должностей
         jobs = set(list(data.job))
+        # Словарь с должностью и средним возрастом (равным 0 при инициализации)
         jobs = {job: 0 for job in jobs}
 
+        # Считаем средний возраст по каждой должности
         for job in jobs.keys():
             sum = 0
             count = 0
@@ -83,6 +88,7 @@ def average_age_by_position(file) -> dict:
                     sum += age
                     count += 1
             jobs[job] = sum / count
+
 
     except pd.errors.EmptyDataError:
         raise HTTPException(status_code=400, detail="CSV file пустой")
@@ -175,7 +181,8 @@ class DataGenerator:
         """Генерирует матрицу данных заданного размера."""
 
         data: list[list[int, str, float]] = []
-        """Ваша реализация"""
+        """Ваша реализация
+        Происходит создание рандомных данным в заданной матрице"""
 
         for i in range(0, matrix_size):
             data.append([random.randint(1, 1000),
@@ -192,11 +199,15 @@ class DataGenerator:
         :param writer: Одна из реализаций классов потомков от BaseWriter
         """
         """Ваша реализация"""
+
+        # Проверка что данные есть
         if len(self.data) != 0:
+            # Создаем директорию если нужно
             path_dict = path.replace(os.path.basename(path).split('/')[-1], "")
             if not os.path.isdir(path_dict):
                 os.mkdir(path_dict)
 
+            # Подключаемся к нашей бд и добавляем в нее сгенерированный файл
             engine = create_engine("sqlite:///test.db")
             writer.write(path, self.data)
             f = UploadFile(File(...))

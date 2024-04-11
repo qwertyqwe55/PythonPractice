@@ -5,10 +5,7 @@ import re
 import sys
 import traceback
 from contextvars import ContextVar
-import time
-
-from fastapi import Request
-from starlette.background import BackgroundTask
+from fastapi import Request, Response
 from starlette.middleware.base import BaseHTTPMiddleware
 
 # lineno через фильтр
@@ -51,17 +48,35 @@ class CustomMiddleware(BaseHTTPMiddleware):
         self.some_attribute = some_attribute
 
     async def dispatch(self, request: Request, call_next):
-        """Load request ID from headers if present. Generate one otherwise."""
+        try:
 
-        responce = await call_next(request)
-        level = str(re.findall(r'\(.*?\)', str(output_log))[0]).replace('(',"").replace(')',"")
-        date_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        output_log.info(f"{date_time} " + '{' +
-                        f"{os.path.realpath(__file__)} : {traceback.extract_stack()[-1].lineno}" + '}' +
-                        f" {level} {request.method} {request.url} {responce.status_code}")
+            # Необходимо для считываения количества выполненных запросов
+            try:
+                with open('number_request.txt', 'r') as f:
+                    counter = int(f.read())
+            except FileNotFoundError:
+                counter = 0
+            except ValueError:
+                counter = 0
 
-        return responce
+            responce = await call_next(request)
 
+            # В счетчик запросов добавляем только успешные запросы
+            if responce.status_code == 200:
+                with open('number_request.txt', 'w') as f:
+                    f.write(str(counter+1))
 
-        # В случае ошибки при запросе, возвращать код 500
-        # response = Response("Internal Server Error", status_code=500)
+            # Получаем уровень логов
+            level = str(re.findall(r'\(.*?\)', str(output_log))[0]).replace('(',"").replace(')',"")
+            # Получаем текущее время
+            date_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            # Создаем нужный формат логов
+            output_log.info(f"{date_time} " + '{' +
+                            f"{os.path.realpath(__file__)} : {traceback.extract_stack()[-1].lineno}" + '}' +
+                            f" {level} {request.method} {request.url} {responce.status_code}")
+
+            return responce
+        except:
+            # В случае ошибки при запросе, возвращать код 500
+            response = Response("Internal Server Error", status_code=500)
+            return response

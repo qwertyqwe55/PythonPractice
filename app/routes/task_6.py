@@ -33,14 +33,15 @@ async def generate_file(file:GeneratedFile):
     """Описание."""
 
     data = DataGenerator()
-    data.generate(10)
     file_id : int
-    file_id = 0
     data.generate(file.matrix_size)
+    # Создается уникальное название файла
     unique_filename = str(uuid.uuid4())
+    # Задаем путь, где будут лежать сгенерированные файлы
     path = './generated_files'
     path = path + '/' + unique_filename
 
+    # В зависимости от типа требуемого файла вызываем нужен Write
     if file.file_type == 'json':
         file_id = data.to_file(path + '.json', JSONWriter())
     elif file.file_type == 'yaml':
